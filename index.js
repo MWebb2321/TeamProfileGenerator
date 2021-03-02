@@ -1,9 +1,44 @@
 const inquirer = require("inquirer");
 
-const intern = require("lib/intern");
-const employee = require("lib/employee");
-const engineer = require("engineer");
-const manager = require("lib.manager");
+const intern = require("lib/manager");
+const employee = require("lib/engineer");
+const engineer = require("lib/employee");
+const manager = require("lib/intern");
 
 const fs = require("fs");
 
+function runInquirer() {
+    const promptArray = [{
+        type: "input",
+        message: "What is your name?",
+        name: "name",
+    }, {
+        type: "input",
+        message: "What is your I.D.?",
+        name: "id",
+    }, {
+        type: "input",
+        message: "What is your email address?",
+        name: "email",
+    }, {
+        type: "input",
+        message: "What is your office role?",
+        name: "role",
+    }];
+    return inquirer
+        .prompt(promptArray);
+}
+
+function runInquirerManager() {
+    const promptArray = [{
+        type: "input",
+        message: "What is your office number",
+        name: "office number"
+    }];
+    return inquirer
+    .prompt(promptArray);
+}
+
+function runInquirerEngineer() {
+
+}
