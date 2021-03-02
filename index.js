@@ -40,5 +40,22 @@ function runInquirerManager() {
 }
 
 function runInquirerEngineer() {
-
+    const promptArray = [{
+        type: "input",
+        message: "What is your gitHub?",
+        name: "github",
+    }];
+    return inquirer
+        .prompt(promptArray);
 }
+
+function runInquirerIntern() {
+    const promptArray = [{
+        type: "input",
+        message: "What school did you attend?",
+        name: "school",
+    }];
+    return inquirer
+        .prompt(promptArray);
+}
+
