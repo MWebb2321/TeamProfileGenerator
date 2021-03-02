@@ -1,9 +1,9 @@
 const inquirer = require("inquirer");
 
-const intern = require("lib/manager");
-const employee = require("lib/engineer");
-const engineer = require("lib/employee");
-const manager = require("lib/intern");
+const intern = require("lib/manager.js");
+const employee = require("lib/engineer.js");
+const engineer = require("lib/employee.js");
+const manager = require("lib/intern.js");
 
 const fs = require("fs");
 
@@ -114,4 +114,4 @@ function createHTMLFile() {
     }
 }
 
-//init();
+init();
