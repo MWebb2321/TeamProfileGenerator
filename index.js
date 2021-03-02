@@ -59,3 +59,59 @@ function runInquirerIntern() {
         .prompt(promptArray);
 }
 
+inquirer.prompt(managerQuestions)
+    .then((response) => {
+        const manager = new manager(response.name, response.id, response.email, response.officenumber);
+        promptArray.push(manager);
+        determineEmployee();
+    });
+
+function determineEmployee() {
+    const employeeQuestions = [{
+        name: 'choice',
+        type: 'list',
+        message: 'What would you like to add:',
+        choices: ['Intern', 'Engineer', 'Done'],
+    }, ];
+    inquirer.prompt(employeeQuestions)
+        .then((answers) => {
+            if (answers.choice === 'Intern') {
+                internInfo();
+            }
+            if (answers.choice === 'Engineer') {
+                engineerInfo();
+            }
+            if (answers.choice === 'Done') {
+                createHTMLFile();
+            }
+        })
+}
+
+function internInfo() {
+    inquirer.prompt(internQuestions)
+        .then((response) => {
+            const intern = new Intern(response.name, response.id, response.email, response.school);
+            teamArray.push(intern);
+            determineEmployee();
+        })
+}
+
+function engineerInfo() {
+    inquirer.prompt(engineerQuestions)
+        .then((response) => {
+            const engineer = new Engineer(response.name, response.id, response.email, response.github);
+            teamArray.push(engineer);
+            determineEmployee();
+        })
+}
+
+function createHTMLFile() {
+    try {
+        const html = render(teamArray);
+        fs.writeFileSync(outputPath, html);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+//init();
