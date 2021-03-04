@@ -1,117 +1,118 @@
-const inquirer = require("inquirer");
+const fs = require('fs');
+const inquirer = require('inquirer');
 
-const intern = require("lib/manager.js");
-const employee = require("lib/engineer.js");
-const engineer = require("lib/employee.js");
-const manager = require("lib/intern.js");
+const generateHTML = require('./src/generateHTML');
+const employeeHTML = require('./src/employeeHTML');
 
-const fs = require("fs");
+const Employee = require('./lib/Employee');
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern');
 
-function runInquirer() {
-    const promptArray = [{
-        type: "input",
-        message: "What is your name?",
-        name: "name",
-    }, {
-        type: "input",
-        message: "What is your I.D.?",
-        name: "id",
-    }, {
-        type: "input",
-        message: "What is your email address?",
-        name: "email",
-    }, {
-        type: "input",
-        message: "What is your office role?",
-        name: "role",
-    }];
-    return inquirer
-        .prompt(promptArray);
-}
+// Array to hold employees user generates
+let employeeList = [];
 
-function runInquirerManager() {
-    const promptArray = [{
-        type: "input",
-        message: "What is your office number",
-        name: "office number"
-    }];
-    return inquirer
-    .prompt(promptArray);
-}
+// Function that prompts user to enter employee info
+const promptUser = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What is the employee's name?"
+        },
 
-function runInquirerEngineer() {
-    const promptArray = [{
-        type: "input",
-        message: "What is your gitHub?",
-        name: "github",
-    }];
-    return inquirer
-        .prompt(promptArray);
-}
+        {
+            type: "number",
+            name: "id",
+            message: "Their employee ID number?"
+        },
 
-function runInquirerIntern() {
-    const promptArray = [{
-        type: "input",
-        message: "What school did you attend?",
-        name: "school",
-    }];
-    return inquirer
-        .prompt(promptArray);
-}
+        {
+            type: "input",
+            name: "email",
+            message: "How about their email address?"
+        },
 
-inquirer.prompt(managerQuestions)
-    .then((response) => {
-        const manager = new manager(response.name, response.id, response.email, response.officenumber);
-        promptArray.push(manager);
-        determineEmployee();
-    });
+        {
+            type: "list",
+            name: "role",
+            message: "Lastly, what is their role?",
+            choices: ["Manager", "Engineer", "Intern"]
+        },
 
-function determineEmployee() {
-    const employeeQuestions = [{
-        name: 'choice',
-        type: 'list',
-        message: 'What would you like to add:',
-        choices: ['Intern', 'Engineer', 'Done'],
-    }, ];
-    inquirer.prompt(employeeQuestions)
-        .then((answers) => {
-            if (answers.choice === 'Intern') {
-                internInfo();
-            }
-            if (answers.choice === 'Engineer') {
-                engineerInfo();
-            }
-            if (answers.choice === 'Done') {
-                createHTMLFile();
-            }
-        })
-}
+        {
+            when: input => {
+                return input.role == "Manager"
+            },
+            type: "input",
+            name: "officeNumber",
+            message: "What is their office number?",
+        },
 
-function internInfo() {
-    inquirer.prompt(internQuestions)
-        .then((response) => {
-            const intern = new Intern(response.name, response.id, response.email, response.school);
-            teamArray.push(intern);
-            determineEmployee();
-        })
-}
+        {
+            when: input => {
+                return input.role == "Engineer"
+            },
+            type: "input",
+            name: "github",
+            message: "What is the engineer's github username?",
+        },
 
-function engineerInfo() {
-    inquirer.prompt(engineerQuestions)
-        .then((response) => {
-            const engineer = new Engineer(response.name, response.id, response.email, response.github);
-            teamArray.push(engineer);
-            determineEmployee();
-        })
-}
+        {
+            when: input => {
+                return input.role == "Intern"
+            },
+            type: "input",
+            name: "school",
+            message: "What is the intern's school?",
+        },
 
-function createHTMLFile() {
-    try {
-        const html = render(teamArray);
-        fs.writeFileSync(outputPath, html);
-    } catch (error) {
-        console.log(error);
-    }
-}
+        {
+            type: "list",
+            name: "continue",
+            message: "Would you like to add another employee?",
+            choices: ["Yes", "No"]
+        }
+    ])
 
-init();
+    .then((answers) => {
+        // Adds employee to array
+        employeeList.push(answers);
+
+        // Logs this employee in the console
+        console.log(employeeList);
+
+        // If user needs to enter more employees...
+        if (answers.continue === "Yes"){
+            // Runs prompting function again
+            promptUser();
+        }
+
+        // If not...
+        else {
+            // Blank string to hold generated HTML
+            let employeeCards = "";
+
+            // For loop that runs functions for HTML generation for each employee in the roster
+            for (var i = 0; i < employeeList.length; i++) {
+                const employeeInfo = employeeHTML(employeeList[i]);
+                
+                // Adds current employee's HTML to the employeeCards string
+                employeeCards += employeeInfo;
+            };
+
+            // Wrting the HTML file (dummy callback to avoid errors)
+            fs.writeFile(`${__dirname}/dist/index.html`, generateHTML(employeeCards), (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+        };
+    })
+
+    // Catching errors...
+    .catch((err) => console.error(err));
+};
+
+// Prompting function is triggered upon running the application
+promptUser();
