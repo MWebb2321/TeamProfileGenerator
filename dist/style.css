@@ -1,18 +1,18 @@
-.managerCard {
+#managerCard {
   background-color: #e63f3fe7;
   padding: 0;
   margin: auto;
   margin-bottom: 15px;
 }
 
-.engineerCard {
+#engineerCard {
   background-color: #3f6ce6e3;
   padding: 0;
   margin: auto;
   margin-bottom: 15px;
 }
 
-.internCard {
+#internCard {
   background-color: #e6e33fe1;
   padding: 0;
   margin: auto;
